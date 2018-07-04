@@ -1,6 +1,58 @@
+{% comment %}
+    TEMPLATE IS product.liquid BUT CAN BE REUSED INSIDE A PRODUCT LOOP
+    OR {{ all_products[] }}
+{% endcomment %}
+
 
 {% comment %}
-    GET CURRENT VARIANT DETAILS
-
-    HELPFUL FOR DISPLAYING CURRENT SIZE OR COLOR, ETC
+  FIND WHETHER PRODUCT CONTAINS COLOR OR SIZE VARIANTS
+  MODIFY ACCORDING TO WHICH VARIANT YOU NEED TO DISPLAY
 {% endcomment %}
+
+{% comment %}
+    RETURNED VARIABLE IS :
+        {{ current_color }} OR {{ current_size }}
+{% endcomment %}
+
+{% assign has_color_variants = false %}
+{% assign has_size_variants = false %}
+{% assign assigned_color = '' %}
+{% assign assigned_size = '' %}
+
+{% for option in product.options_with_values %}
+    {% assign name = option.name | downcase %}
+
+    {% comment %}
+        FUTURE-PROOF THE CALLED VARIANT TYPE WITH PLURAL VERSION
+        BECAUSE HUMANS MAKE MISTAKES INSIDE ADMIN
+    {% endcomment %}
+    {% if name contains 'color' or name contains 'colors' %}
+        {% assign assigned_color = option.position %}
+        {% assign has_color_variants = true %}
+    {% elsif name contains 'size' or name contains 'sizes' %}
+        {% assign assigned_size = option.position %}
+        {% assign has_size_variants = true %}
+    {% endif %}
+{% endfor %}
+
+{% assign current_color = 0 %}
+{% if assigned_color == 1 %}
+  {% assign current_color = product.selected_or_first_available_variant.option1 %}
+{% elsif assigned_color == 2 %}
+  {% assign current_color = product.selected_or_first_available_variant.option2 %}
+{% elsif assigned_color == 3 %}
+  {% assign current_color = product.selected_or_first_available_variant.option3 %}
+{% endif %}
+
+{% assign current_size = 0 %}
+{% if assigned_size == 1 %}
+  {% assign current_size = product.selected_or_first_available_variant.option1 %}
+{% elsif assigned_size == 2 %}
+  {% assign current_size = product.selected_or_first_available_variant.option2 %}
+{% elsif assigned_size == 3 %}
+  {% assign current_size = product.selected_or_first_available_variant.option3 %}
+{% endif %}
+
+Color: {{ current_color }}
+<br>
+Size: {{ current_size }}
