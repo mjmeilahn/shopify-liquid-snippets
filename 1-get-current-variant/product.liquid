@@ -53,6 +53,11 @@
   {% assign current_size = product.selected_or_first_available_variant.option3 %}
 {% endif %}
 
-Color: {{ current_color }}
+{% if has_color_variants %}
+  Color: {{ current_color }}
 <br>
-Size: {{ current_size }}
+{% endif %}
+
+{% if has_size_variants %}
+  Size: {{ current_size }}
+{% endif %}
